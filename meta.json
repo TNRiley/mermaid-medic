@@ -1,0 +1,22 @@
+{
+  "slug": "mermaid-medic",
+  "title": "Mermaid Medic",
+  "favicon": "🧜",
+  "built": "2026-09-03",
+  "tagline": "A linter and live renderer for Mermaid architecture diagrams.",
+  "blurb": "Paste a .mmd file and get it checked against a strict convention set — quoted labels, safe node IDs, balanced subgraph/end, no stray fences — then rendered live. One-click auto-fix repairs violations, including renaming an unsafe ID everywhere it appears across both node definitions and edges, which is the failure that silently breaks a diagram.",
+  "tags": [
+    "developer tool",
+    "mermaid",
+    "documentation",
+    "linter"
+  ],
+  "sources": [],
+  "stack": [
+    "vanilla JS",
+    "mermaid.js 10.9.1 (cdnjs)"
+  ],
+  "hasSource": "html-is-source",
+  "bytes": 23230,
+  "published": false
+}

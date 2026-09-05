@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>:root{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<!-- wrapped-for-pages -->
+<title>Mermaid Medic</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --ground:#F3F5F7; --surface:#FFFFFF; --surface-2:#EDF1F4; --editor:#FBFCFD;
+    --ink:#141A1F; --muted:#586170; --faint:#8B95A3; --line:#E1E7EC;
+    --accent:#0E9C8D; --accent-ink:#FFFFFF; --accent-soft:#DCF3F0;
+    --err:#D5323B; --err-soft:#FBE7E8; --warn:#B4740B; --warn-soft:#FBF0DC; --ok:#1E9E63; --ok-soft:#DEF3E7;
+    --shadow:0 1px 2px rgba(20,26,31,.05),0 10px 26px rgba(20,26,31,.07);
+    --r:14px; --r-sm:10px;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --ground:#0C1014; --surface:#141A21; --surface-2:#1B222B; --editor:#0F151B;
+    --ink:#E8EEF4; --muted:#98A3B2; --faint:#66717F; --line:#232B35;
+    --accent:#3FD3C2; --accent-ink:#06120F; --accent-soft:#122421;
+    --err:#F26A6F; --err-soft:#2A1618; --warn:#E8A94B; --warn-soft:#271E12; --ok:#4BD08A; --ok-soft:#132318;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.4);
+  }}
+  :root[data-theme="dark"]{
+    --ground:#0C1014; --surface:#141A21; --surface-2:#1B222B; --editor:#0F151B;
+    --ink:#E8EEF4; --muted:#98A3B2; --faint:#66717F; --line:#232B35;
+    --accent:#3FD3C2; --accent-ink:#06120F; --accent-soft:#122421;
+    --err:#F26A6F; --err-soft:#2A1618; --warn:#E8A94B; --warn-soft:#271E12; --ok:#4BD08A; --ok-soft:#132318;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 32px rgba(0,0,0,.4);
+  }
+  *{box-sizing:border-box}
+  body{background:var(--ground);color:var(--ink);font-family:"Archivo",system-ui,sans-serif;line-height:1.45;-webkit-font-smoothing:antialiased;}
+  .mono{font-family:"JetBrains Mono",ui-monospace,monospace;}
+  .wrap{max-width:1180px;margin:0 auto;padding:20px 20px 48px;}
+
+  header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .logo{width:42px;height:42px;border-radius:12px;background:var(--accent-soft);display:grid;place-items:center;flex:none;
+    border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);}
+  .logo svg{width:24px;height:24px;}
+  .brand h1{margin:0;font-size:21px;font-weight:800;letter-spacing:-.02em;}
+  .brand .sub{font-size:12px;color:var(--muted);font-weight:600;}
+  .brand .sub code{font-family:"JetBrains Mono",monospace;color:var(--accent);font-size:11.5px;}
+  .tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  button{font-family:"Archivo",sans-serif;cursor:pointer;}
+  .btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;
+    padding:9px 14px;font-weight:600;font-size:13.5px;display:inline-flex;align-items:center;gap:7px;
+    transition:border-color .12s,transform .1s,background .12s;}
+  .btn:hover{border-color:var(--accent);} .btn:active{transform:translateY(1px);}
+  .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent;}
+  .btn.primary:hover{filter:brightness(1.05);}
+  .btn.icon{padding:9px 11px;}
+
+  .summary{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 14px;
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px 15px;box-shadow:var(--shadow);}
+  .pill{display:inline-flex;align-items:center;gap:7px;font-weight:700;font-size:13px;padding:5px 11px;border-radius:999px;
+    font-family:"JetBrains Mono",monospace;}
+  .pill .n{font-size:14px;}
+  .pill.err{background:var(--err-soft);color:var(--err);} .pill.warn{background:var(--warn-soft);color:var(--warn);}
+  .pill.ok{background:var(--ok-soft);color:var(--ok);} .pill.render{background:var(--surface-2);color:var(--muted);}
+  .pill.render.good{background:var(--ok-soft);color:var(--ok);} .pill.render.bad{background:var(--err-soft);color:var(--err);}
+  .summary .spacer{flex:1;} .summary .clean{color:var(--muted);font-size:13px;font-weight:600;}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:860px){.grid{grid-template-columns:1fr;}}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;}
+  .panel .phead{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--line);}
+  .phead .lbl{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);font-weight:700;}
+  .phead .hint{font-size:11.5px;color:var(--faint);}
+  textarea#editor{width:100%;min-height:360px;resize:vertical;border:none;outline:none;background:var(--editor);color:var(--ink);
+    font-family:"JetBrains Mono",monospace;font-size:13px;line-height:1.7;padding:14px 16px;tab-size:2;white-space:pre;overflow:auto;}
+  #diagram{min-height:360px;padding:16px;overflow:auto;display:flex;align-items:center;justify-content:center;background:
+    repeating-linear-gradient(45deg,transparent,transparent 10px,color-mix(in srgb,var(--line) 30%,transparent) 10px,color-mix(in srgb,var(--line) 30%,transparent) 11px);}
+  #diagram svg{max-width:100%;height:auto;}
+  .renderfail{font-family:"JetBrains Mono",monospace;font-size:12.5px;color:var(--err);background:var(--err-soft);
+    border:1px solid color-mix(in srgb,var(--err) 30%,transparent);border-radius:10px;padding:12px 14px;max-width:100%;white-space:pre-wrap;align-self:flex-start;}
+
+  .findings{margin-top:16px;}
+  .findings h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:700;margin:0 0 10px 2px;}
+  .flist{display:flex;flex-direction:column;gap:8px;}
+  .finding{display:grid;grid-template-columns:auto auto 1fr;gap:12px;align-items:start;background:var(--surface);
+    border:1px solid var(--line);border-left-width:3px;border-radius:var(--r-sm);padding:11px 14px;cursor:pointer;transition:border-color .12s,transform .08s;}
+  .finding:hover{border-color:var(--accent);} .finding:active{transform:scale(.997);}
+  .finding.err{border-left-color:var(--err);} .finding.warn{border-left-color:var(--warn);}
+  .sev{font-family:"JetBrains Mono",monospace;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:6px;white-space:nowrap;margin-top:1px;}
+  .sev.err{background:var(--err-soft);color:var(--err);} .sev.warn{background:var(--warn-soft);color:var(--warn);}
+  .loc{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--muted);white-space:nowrap;margin-top:3px;}
+  .fbody .msg{font-size:14px;font-weight:600;}
+  .fbody .rule{font-size:11.5px;color:var(--faint);font-family:"JetBrains Mono",monospace;margin-top:2px;}
+  .fbody .snip{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--muted);background:var(--surface-2);
+    border-radius:6px;padding:4px 8px;margin-top:7px;display:inline-block;max-width:100%;overflow:auto;white-space:pre;}
+  .fbody .snip .bad{color:var(--err);font-weight:700;background:var(--err-soft);border-radius:3px;padding:0 2px;}
+  .allclean{background:var(--ok-soft);border:1px solid color-mix(in srgb,var(--ok) 30%,transparent);color:var(--ok);
+    border-radius:var(--r-sm);padding:16px;text-align:center;font-weight:700;}
+
+  .rules{margin-top:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;}
+  .rule-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-sm);padding:12px 14px;}
+  .rule-card b{font-size:13px;} .rule-card p{margin:4px 0 0;font-size:12px;color:var(--muted);line-height:1.5;}
+  .rule-card code{font-family:"JetBrains Mono",monospace;font-size:11px;background:var(--surface-2);padding:1px 5px;border-radius:5px;color:var(--accent);}
+
+  .foot{margin-top:26px;text-align:center;font-size:11.5px;color:var(--faint);line-height:1.7;}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--ground);
+    padding:11px 18px;border-radius:10px;font-weight:600;font-size:13.5px;opacity:0;pointer-events:none;transition:.25s;z-index:50;box-shadow:0 10px 30px rgba(0,0,0,.3);}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  button:focus-visible,.finding:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)">
+          <rect x="3" y="3" width="7" height="5" rx="1"></rect><rect x="14" y="6" width="7" height="5" rx="1"></rect>
+          <rect x="8" y="15" width="7" height="5" rx="1"></rect><path d="M6.5 8v3.5h9M11.5 15v-2"></path>
+        </svg>
+      </div>
+      <div>
+        <h1>Mermaid Medic</h1>
+        <div class="sub">Lints <code>.mmd</code> against your RELMermaid conventions · renders live</div>
+      </div>
+    </div>
+    <div class="tools">
+      <button class="btn icon" id="themeBtn" title="Toggle theme" aria-label="Toggle theme">◐</button>
+      <button class="btn" id="sampleBtn">Load sample</button>
+      <button class="btn" id="copyBtn">Copy</button>
+      <button class="btn primary" id="fixBtn">✓ Auto-fix</button>
+    </div>
+  </header>
+
+  <div class="summary" id="summary"></div>
+
+  <div class="grid">
+    <div class="panel">
+      <div class="phead"><span class="lbl">Source · raw .mmd</span><span class="hint">no ``` fences · edits lint live</span></div>
+      <textarea id="editor" spellcheck="false" autocomplete="off" aria-label="Mermaid source"></textarea>
+    </div>
+    <div class="panel">
+      <div class="phead"><span class="lbl">Rendered</span><span class="hint" id="renderHint">mermaid preview</span></div>
+      <div id="diagram"></div>
+    </div>
+  </div>
+
+  <div class="findings">
+    <h2>Findings</h2>
+    <div class="flist" id="flist"></div>
+  </div>
+
+  <div class="rules" id="rules"></div>
+
+  <div class="foot">
+    Mermaid Medic — a nightly one-shot for Trevor · enforces the RELMermaid rules so one bad node ID can't silently break a whole render.<br>
+    Auto-fix is best-effort on flowcharts — eyeball the diff before committing.
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const editor=$("#editor");
+
+const SAMPLE=`\`\`\`mermaid
+flowchart TD
+  subgraph ui["UI Layer"]
+    upload["Upload Module"]
+    search-core["Search Core"]
+    table[Results Table]
+  end
+  subgraph server["Server Layer"]
+    engine["Citation Engine"]
+    dedup["Dedup / Merge"]
+  end
+  db[("DuckDB + FTS5 Index")]
+  upload --> engine
+  engine -->|sends refs| dedup
+  dedup --> db
+  search-core --> db
+  db --> table
+\`\`\``;
+
+/* ---------- shapes (longest delimiters first) ---------- */
+const ID_CH="A-Za-z0-9_.\\-";
+const SHAPES=[
+  {name:"double-circle",re:()=>new RegExp("(["+ID_CH+"]+)\\(\\((.*?)\\)\\)","g"),o:"((",c:"))"},
+  {name:"stadium",re:()=>new RegExp("(["+ID_CH+"]+)\\(\\[(.*?)\\]\\)","g"),o:"([",c:"])"},
+  {name:"cylinder",re:()=>new RegExp("(["+ID_CH+"]+)\\[\\((.*?)\\)\\]","g"),o:"[(",c:")]"},
+  {name:"subroutine",re:()=>new RegExp("(["+ID_CH+"]+)\\[\\[(.*?)\\]\\]","g"),o:"[[",c:"]]"},
+  {name:"hexagon",re:()=>new RegExp("(["+ID_CH+"]+)\\{\\{(.*?)\\}\\}","g"),o:"{{",c:"}}"},
+  {name:"rect",re:()=>new RegExp("(["+ID_CH+"]+)\\[(.*?)\\]","g"),o:"[",c:"]"},
+  {name:"round",re:()=>new RegExp("(["+ID_CH+"]+)\\((.*?)\\)","g"),o:"(",c:")"},
+  {name:"rhombus",re:()=>new RegExp("(["+ID_CH+"]+)\\{(.*?)\\}","g"),o:"{",c:"}"},
+];
+const SKIP=/^\s*(%%|classDef|class |style |linkStyle|click |flowchart|graph|sequenceDiagram|gantt|stateDiagram|erDiagram|journey|pie|end\b)/;
+const badId=id=>/[^A-Za-z0-9_]/.test(id);
+const quoted=s=>{const t=s.trim();return t==="" || (t.startsWith('"')&&t.endsWith('"'));};
+
+function collectNodes(line){
+  let mask=line.split(""); const found=[];
+  for(const s of SHAPES){
+    const snap=mask.join(""); const re=s.re(); let m;
+    const spans=[];
+    while((m=re.exec(snap))!==null){ spans.push({start:m.index,end:m.index+m[0].length,id:m[1],label:m[2],shape:s}); }
+    for(const sp of spans){ for(let i=sp.start;i<sp.end;i++) mask[i]=" "; }
+    found.push(...spans);
+  }
+  return found.sort((a,b)=>a.start-b.start);
+}
+function parseSubgraph(line){
+  const sm=line.match(/^\s*subgraph\s+(.*\S)\s*$/); if(!sm) return null;
+  const rest=sm[1];
+  const b=rest.match(/^([^\[\s]+)\s*\[(.*)\]\s*$/);
+  if(b) return {id:b[1],label:b[2],hasLabel:true};
+  if(/^".*"$/.test(rest)) return {id:null,label:rest,hasLabel:true};
+  return {id:rest,label:null,hasLabel:false};
+}
+
+/* ---------- linter ---------- */
+function lint(src){
+  const lines=src.split("\n"); const out=[]; const sgStack=[];
+  lines.forEach((line,i)=>{
+    const ln=i+1;
+    if(line.includes("```")){ out.push({ln,sev:"err",rule:"no-fences",msg:"Markdown code fence inside .mmd — files under docs/diagrams/ hold raw Mermaid only.",snip:hl(line,"```")}); return; }
+    if(/^\s*subgraph\b/.test(line)){
+      sgStack.push(ln);
+      const sg=parseSubgraph(line);
+      if(sg){
+        if(sg.id&&badId(sg.id)) out.push({ln,sev:"err",rule:"safe-id",msg:`Subgraph ID "${sg.id}" has illegal characters — use only A–Z, 0–9, _.`,snip:hl(line,sg.id)});
+        if(sg.hasLabel&&!quoted(sg.label)) out.push({ln,sev:"err",rule:"quote-label",msg:"Subgraph label isn't wrapped in double quotes.",snip:hl(line,sg.label)});
+      }
+      return;
+    }
+    if(/^\s*end\s*$/.test(line)){ if(sgStack.length) sgStack.pop(); else out.push({ln,sev:"err",rule:"balance",msg:"`end` with no open `subgraph`.",snip:line.trim()}); return; }
+    if(SKIP.test(line)) return;
+    // nodes
+    for(const n of collectNodes(line)){
+      if(badId(n.id)) out.push({ln,sev:"err",rule:"safe-id",msg:`Node ID "${n.id}" has illegal characters — one bad ID silently breaks the whole render. Use only A–Z, 0–9, _.`,snip:hl(line,n.id)});
+      if(!quoted(n.label)) out.push({ln,sev:"err",rule:"quote-label",msg:`Label ${n.shape.o}${n.label.trim()}${n.shape.c} isn't in double quotes.`,snip:hl(line,n.shape.o+n.label+n.shape.c)});
+    }
+    // edge labels |...|
+    let em; const ere=/\|([^|]*)\|/g;
+    while((em=ere.exec(line))!==null){ if(!quoted(em[1])) out.push({ln,sev:"warn",rule:"quote-label",msg:"Edge label isn't in double quotes.",snip:hl(line,"|"+em[1]+"|")}); }
+  });
+  sgStack.forEach(ln=>out.push({ln,sev:"err",rule:"balance",msg:"`subgraph` is never closed with a matching `end`.",snip:(src.split("\n")[ln-1]||"").trim()}));
+  out.sort((a,b)=>a.ln-b.ln);
+  return out;
+}
+function hl(line,bad){
+  const t=line.trim(); const idx=t.indexOf(bad);
+  if(idx<0) return esc(t);
+  return esc(t.slice(0,idx))+'<span class="bad">'+esc(bad)+'</span>'+esc(t.slice(idx+bad.length));
+}
+
+/* ---------- auto-fix ---------- */
+function autofix(src){
+  const idMap={};
+  // pass 1: discover bad ids
+  src.split("\n").forEach(line=>{
+    if(line.includes("```")) return;
+    if(/^\s*subgraph\b/.test(line)){ const sg=parseSubgraph(line); if(sg&&sg.id&&badId(sg.id)) idMap[sg.id]=sg.id.replace(/[^A-Za-z0-9_]/g,"_"); return; }
+    if(/^\s*end\s*$/.test(line)||SKIP.test(line)) return;
+    for(const n of collectNodes(line)) if(badId(n.id)) idMap[n.id]=n.id.replace(/[^A-Za-z0-9_]/g,"_");
+  });
+  // pass 2: rebuild
+  const outLines=[];
+  src.split("\n").forEach(line=>{
+    if(line.includes("```")) return; // drop fence lines
+    let L=line;
+    if(/^\s*subgraph\b/.test(L)){
+      const sg=parseSubgraph(L);
+      if(sg){
+        const indent=(L.match(/^\s*/)||[""])[0];
+        const id=sg.id?(idMap[sg.id]||sg.id):null;
+        const lab=sg.hasLabel?ensureQuoted(sg.label):null;
+        L= indent+"subgraph "+(id?id:"")+(lab?(id?" ":"")+"["+lab+"]":"");
+      }
+      outLines.push(L); return;
+    }
+    if(/^\s*end\s*$/.test(L)||SKIP.test(L)){ outLines.push(applyIdMap(L,idMap)); return; }
+    // rebuild node spans on this line
+    const nodes=collectNodes(L);
+    if(nodes.length){
+      let res="",cur=0;
+      for(const n of nodes){
+        res+=L.slice(cur,n.start);
+        const id=idMap[n.id]||n.id;
+        res+=id+n.shape.o+ensureQuoted(n.label)+n.shape.c;
+        cur=n.end;
+      }
+      res+=L.slice(cur);
+      L=res;
+    }
+    // quote edge labels
+    L=L.replace(/\|([^|]*)\|/g,(m,g)=> "|"+ensureQuoted(g)+"|");
+    // remap ids used in edges etc.
+    L=applyIdMap(L,idMap);
+    outLines.push(L);
+  });
+  return outLines.join("\n");
+}
+function ensureQuoted(s){const t=s.trim(); if(t===""||(t.startsWith('"')&&t.endsWith('"'))) return t; return '"'+t.replace(/"/g,"")+'"';}
+function applyIdMap(line,idMap){
+  const keys=Object.keys(idMap); if(!keys.length) return line;
+  return line.split(/(".*?")/).map((seg,i)=>{
+    if(i%2===1) return seg;
+    let out=seg;
+    for(const bad of keys){ const esc2=bad.replace(/[.*+?^${}()|[\]\\-]/g,"\\$&");
+      out=out.replace(new RegExp("(^|[^A-Za-z0-9_])"+esc2+"(?=[^A-Za-z0-9_]|$)","g"),"$1"+idMap[bad]); }
+    return out;
+  }).join("");
+}
+
+/* ---------- render ---------- */
+let renderSeq=0;
+async function renderDiagram(){
+  const host=$("#diagram"); const code=editor.value.trim();
+  const my=++renderSeq;
+  if(!window.mermaid){ host.innerHTML='<div class="renderfail">mermaid failed to load (offline?)</div>'; setRender(null); return; }
+  const stripped=code.replace(/```[a-zA-Z]*\n?/g,"").replace(/```/g,"").trim();
+  try{
+    window.mermaid.initialize({startOnLoad:false,securityLevel:"strict",theme:isDark()?"dark":"default",flowchart:{htmlLabels:true,curve:"basis"}});
+    const {svg}=await window.mermaid.render("mm_"+my,stripped);
+    if(my!==renderSeq) return;
+    host.innerHTML=svg; setRender(true);
+  }catch(e){ if(my!==renderSeq) return;
+    host.innerHTML='<div class="renderfail">⚠ '+esc(String((e&&e.message)||e).split("\n").slice(0,4).join("\n"))+'</div>'; setRender(false); }
+}
+let lastRenderOk=null;
+function setRender(ok){ lastRenderOk=ok; $("#renderHint").textContent= ok===true?"renders cleanly":ok===false?"render error":"mermaid preview"; renderSummary(); }
+
+/* ---------- summary + findings ---------- */
+let curFindings=[];
+function renderSummary(){
+  const e=curFindings.filter(f=>f.sev==="err").length, w=curFindings.filter(f=>f.sev==="warn").length;
+  const s=$("#summary");
+  let html="";
+  html+= e? `<span class="pill err"><span class="n">${e}</span> ${e===1?"error":"errors"}</span>`
+          : `<span class="pill ok">✓ no errors</span>`;
+  if(w) html+=`<span class="pill warn"><span class="n">${w}</span> ${w===1?"warning":"warnings"}</span>`;
+  const rc = lastRenderOk===true?"render good":lastRenderOk===false?"render bad":"render";
+  html+=`<span class="pill ${rc}">${lastRenderOk===true?"◆ diagram renders":lastRenderOk===false?"✗ won't render":"◇ preview"}</span>`;
+  html+=`<span class="spacer"></span>`;
+  html+= (e||w)? `<span class="clean">${e?"Auto-fix can clear most of these":"Looks clean"}</span>` : `<span class="clean">Conventions satisfied 🎉</span>`;
+  s.innerHTML=html;
+}
+function renderFindings(){
+  const el=$("#flist");
+  if(!curFindings.length){ el.innerHTML=`<div class="allclean">✓ No convention violations. Labels quoted, IDs safe, subgraphs balanced.</div>`; return; }
+  el.innerHTML=curFindings.map((f,i)=>`
+    <div class="finding ${f.sev}" data-ln="${f.ln}" tabindex="0" role="button">
+      <span class="sev ${f.sev}">${f.sev==="err"?"ERROR":"WARN"}</span>
+      <span class="loc">line ${f.ln}</span>
+      <div class="fbody"><div class="msg">${esc(f.msg)}</div><div class="rule">${f.rule}</div>
+        ${f.snip?`<div class="snip">${f.snip}</div>`:""}</div>
+    </div>`).join("");
+  el.querySelectorAll(".finding").forEach(it=>{
+    const jump=()=>gotoLine(+it.dataset.ln);
+    it.addEventListener("click",jump);
+    it.addEventListener("keydown",e=>{if(e.key==="Enter")jump();});
+  });
+}
+function gotoLine(ln){
+  const lines=editor.value.split("\n"); let start=0;
+  for(let i=0;i<ln-1;i++) start+=lines[i].length+1;
+  const end=start+(lines[ln-1]||"").length;
+  editor.focus(); editor.setSelectionRange(start,end);
+  const approx=(ln-1)* (editor.scrollHeight/Math.max(1,lines.length));
+  editor.scrollTop=Math.max(0,approx-editor.clientHeight/2);
+}
+
+/* ---------- glue ---------- */
+let t1,t2;
+function onInput(){
+  clearTimeout(t1); t1=setTimeout(()=>{ curFindings=lint(editor.value); renderFindings(); renderSummary(); },180);
+  clearTimeout(t2); t2=setTimeout(renderDiagram,420);
+}
+function runAll(){ curFindings=lint(editor.value); renderFindings(); renderSummary(); renderDiagram(); }
+
+editor.addEventListener("input",onInput);
+$("#sampleBtn").onclick=()=>{ editor.value=SAMPLE; runAll(); toast("Sample loaded"); };
+$("#fixBtn").onclick=()=>{
+  const before=lint(editor.value).filter(f=>f.rule!=="balance").length;
+  editor.value=autofix(editor.value); runAll();
+  const after=curFindings.length;
+  toast(before>0?`Applied fixes · ${Math.max(0,before)} issue${before===1?"":"s"} addressed`:"Nothing to fix");
+};
+$("#copyBtn").onclick=async()=>{ try{ await navigator.clipboard.writeText(editor.value); toast("Copied .mmd to clipboard"); }catch(e){ toast("Copy failed"); } };
+$("#themeBtn").onclick=()=>{
+  const cur=document.documentElement.getAttribute("data-theme");
+  const next=cur==="dark"?"light":cur==="light"?"dark":(matchMedia("(prefers-color-scheme: dark)").matches?"light":"dark");
+  document.documentElement.setAttribute("data-theme",next);
+  try{localStorage.setItem("mmedic.theme",next);}catch(e){}
+  renderDiagram();
+};
+function isDark(){ const a=document.documentElement.getAttribute("data-theme"); if(a)return a==="dark"; return matchMedia("(prefers-color-scheme: dark)").matches; }
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+let tt; function toast(m){const el=$("#toast");el.textContent=m;el.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>el.classList.remove("show"),1700);}
+
+const RULES=[
+  ["Quote every label",'All node & subgraph text is wrapped in <code>"…"</code>.'],
+  ["Safe IDs only",'IDs use <code>[A-Za-z0-9_]</code> — a single hyphen or dot silently breaks the render.'],
+  ["Balanced subgraphs",'Every <code>subgraph</code> has a matching <code>end</code>.'],
+  ["No fences",'Raw <code>.mmd</code> holds Mermaid only — no <code>```</code> blocks.'],
+];
+$("#rules").innerHTML=RULES.map(r=>`<div class="rule-card"><b>${r[0]}</b><p>${r[1]}</p></div>`).join("");
+
+(function init(){ try{const t=localStorage.getItem("mmedic.theme");if(t)document.documentElement.setAttribute("data-theme",t);}catch(e){}
+  editor.value=SAMPLE; runAll(); })();
+</script>
+
+</body>
+</html>
